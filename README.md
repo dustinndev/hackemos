@@ -14,4 +14,3 @@ Allows you to complete any lesson type with a set time and accuracy
 
 Available at: https://hackemos.com
 
-<img width="600" height="400" alt="Hackemos demo" src="https://github.com/user-attachments/assets/47023064-ebcc-42a2-8679-1ec6a18d12dc" />
