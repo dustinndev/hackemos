@@ -1,8 +1,8 @@
-<img width="60" height="60" alt="logo" src="https://github.com/user-attachments/assets/94cdfd7b-fae1-402a-9427-369d11a42207" />
+<img width="80" height="80" alt="svg-clean" src="https://github.com/user-attachments/assets/2e5273ac-b6a5-4822-af23-a2f91b47ce9d" />
 
 # Hackemos
 
-**Easily Automate Conjuguemos assignments**
+*Easily Automate Conjuguemos assignments*
 
 ## What Hackemos Is NOT
 
@@ -12,5 +12,5 @@
 
 Allows you to complete any lesson type with a set time and accuracy
 
-Available at: https://hackemos.com
+**Available at: https://hackemos.com**
 
