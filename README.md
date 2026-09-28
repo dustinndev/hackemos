@@ -1,4 +1,5 @@
-<img width="356" height="425" alt="hackemos logo" src="https://github.com/user-attachments/assets/3becd84a-a0e5-4d75-9ec9-db9d19bbd2fc" />
+
+<img width="100" height="100" alt="hackemoslogo" src="https://github.com/user-attachments/assets/4610e168-3939-4425-baa8-ce1c5588e15c" />
 
 # Hackemos
 
@@ -25,4 +26,4 @@ Available at: https://hackemos.com
 
 ---
 
-<img width="800" height="533" alt="demo" src="https://github.com/user-attachments/assets/d6b9b128-a91f-4162-95be-892d7990ac82" />
+<img width="40" height="40<img width="300" height="300" alt="demo" src="https://github.com/user-attachments/assets/47023064-ebcc-42a2-8679-1ec6a18d12dc" />
