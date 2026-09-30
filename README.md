@@ -14,3 +14,5 @@ Allows you to complete any lesson type with a set time and accuracy
 
 **Available at: https://hackemos.com**
 
+Usage:
+https://www.youtube.com/watch?v=tsbL0iL3V10
