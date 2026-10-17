@@ -1,0 +1,82 @@
+{
+  "manifest_version": 3,
+  "name": "Hackemos",
+  "description": "Complete Conjuguemos activities right on the page.",
+  "permissions": [
+    "cookies",
+    "storage"
+  ],
+  "host_permissions": [
+    "https://conjuguemos.com/*",
+    "https://app.hackemos.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Hackemos",
+    "default_icon": {
+      "16": "icons/16.png",
+      "32": "icons/32.png",
+      "48": "icons/48.png"
+    }
+  },
+  "icons": {
+    "16": "icons/16.png",
+    "32": "icons/32.png",
+    "48": "icons/48.png",
+    "128": "icons/128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://conjuguemos.com/grammar/*",
+        "https://conjuguemos.com/verb/*",
+        "https://conjuguemos.com/vocabulary/*",
+        "https://conjuguemos.com/assignment/*",
+        "https://conjuguemos.com/tube/accents/*",
+        "https://conjuguemos.com/student/grades*"
+      ],
+      "js": [
+        "overlay.js"
+      ],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": [
+        "https://conjuguemos.com/grammar/*",
+        "https://conjuguemos.com/verb/*",
+        "https://conjuguemos.com/vocabulary/*",
+        "https://conjuguemos.com/assignment/*",
+        "https://conjuguemos.com/tube/accents/*"
+      ],
+      "js": [
+        "page.js"
+      ],
+      "run_at": "document_idle",
+      "world": "MAIN"
+    },
+    {
+      "matches": [
+        "https://app.hackemos.com/*"
+      ],
+      "js": [
+        "relay.js"
+      ],
+      "run_at": "document_start"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "fonts/*.woff2"
+      ],
+      "matches": [
+        "https://conjuguemos.com/*"
+      ]
+    }
+  ],
+  "version": "1.1.2"
+}
