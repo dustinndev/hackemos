@@ -210,6 +210,7 @@ function plan(me) {
   const out = left === 0;
   const price = me.price?.label ? ` · ${me.price.label}` : '';
   const url = me.upgradeUrl || 'https://app.hackemos.com/?upgrade=1';
+  const pack = me.pack && me.packUrl ? `+${me.pack.submits} submit credits · ${me.pack.label}` : null;
   return h('section', { class: `plan ${out ? 'out' : ''}` },
     h('p', { class: 'plan-line' },
       out ? h('strong', { class: 'none', text: 'No free submits left' }) : [h('strong', { text: `${left} of ${limit}` }), ' free submits']),
@@ -217,8 +218,35 @@ function plan(me) {
       h('div', { style: `width:${limit ? left / limit * 100 : 0}%` })),
     !me.paused && (out
       ? [link(`Get unlimited${price}`, url, 'btn primary'),
+        pack && link(pack, me.packUrl, 'btn plan-pack'),
         me.referral && link(`or refer a classmate for +${me.referral.bonus}`, referUrl(me), 'plan-refer')]
-      : h('a', { href: url, target: '_blank', rel: 'noopener', class: 'plan-link' }, `Get unlimited${price}`, icon('chevron').firstChild)));
+      : h('div', { class: 'plan-links' },
+        h('a', { href: url, target: '_blank', rel: 'noopener', class: 'plan-link' }, `Get unlimited${price}`, icon('chevron').firstChild),
+        pack && link(pack, me.packUrl, 'plan-topup'))));
+}
+
+function redeem() {
+  const input = h('input', { type: 'text', placeholder: 'Invite code', autocomplete: 'off', spellcheck: 'false', maxlength: '120', 'aria-label': 'Invite code' });
+  const button = h('button', { class: 'btn primary', type: 'submit', text: 'Apply' });
+  const error = h('p', { class: 'redeem-error', hidden: true });
+  const form = h('form', { class: 'redeem' }, h('div', { class: 'redeem-row' }, input, button), error);
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+    const code = input.value.trim();
+    if (!code) return;
+    error.hidden = true;
+    button.disabled = true;
+    const { body } = await api('POST', '/api/ext/referral-redeem', { code });
+    button.disabled = false;
+    if (!body?.success) {
+      error.textContent = body?.message || "Couldn't apply that code. Try again.";
+      error.hidden = false;
+      return;
+    }
+    if (body.status === 'pending') await chrome.storage.local.set({ pendingRef: body.code });
+    load();
+  });
+  return form;
 }
 
 const referUrl = me => me.referUrl || 'https://app.hackemos.com/?refer=1';
@@ -300,6 +328,7 @@ async function renderAccount(me, ...top) {
     ...(me.paused ? [] : await pollList(me.polls)),
     identity(account),
     plan(me),
+    me.canRedeem && !me.paused ? redeem() : '',
     outOfSubmits(account) ? '' : h('section', { class: 'settings' }, await injectToggle(), ...(me.prefs ? prefToggles(me.prefs) : [])),
     h('footer', { class: 'foot' },
       link('Settings', me.settingsUrl || 'https://app.hackemos.com/settings'),

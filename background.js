@@ -50,6 +50,8 @@ async function writeBack(sent, value) {
   return true;
 }
 
+const siteLogin = () => chrome.cookies.get({ url: API_BASE + '/', name: 'token' }).then(c => c?.value || null, () => null);
+
 const retryable = path => !path.startsWith('/api/ext/submit');
 
 async function api(msg, retried = false) {
@@ -58,6 +60,7 @@ async function api(msg, retried = false) {
   const cookie = await readSession();
   if (!cookie || !SESSION_RE.test(cookie.value)) return { status: 400, body: SIGNED_OUT };
 
+  const login = await siteLogin();
   let res;
   try {
     res = await fetch(API_BASE + path, {
@@ -66,6 +69,7 @@ async function api(msg, retried = false) {
       headers: {
         'X-CJ-Session': cookie.value,
         'X-Ext-Version': chrome.runtime.getManifest().version,
+        ...(login ? { 'X-HK-Token': login } : {}),
         ...(body ? { 'Content-Type': 'application/json' } : {}),
       },
       body: body ? JSON.stringify(body) : undefined,
@@ -106,10 +110,13 @@ const REF_COOKIE = { url: API_BASE + '/', name: 'hk_ref' };
 const REF_RE = /^[0-9a-z]{5,14}$/;
 async function claimReferral() {
   const ref = await chrome.cookies.get(REF_COOKIE).catch(() => null);
-  if (!ref || !REF_RE.test(ref.value)) return;
-  const { body } = await api({ method: 'POST', path: '/api/ext/referral-claim', body: { code: ref.value } });
+  const { pendingRef } = await chrome.storage.local.get('pendingRef');
+  const code = ref && REF_RE.test(ref.value) ? ref.value : pendingRef;
+  if (!code || !REF_RE.test(code)) return;
+  const { body } = await api({ method: 'POST', path: '/api/ext/referral-claim', body: { code } });
   if (!body?.success || body.status === 'pending') return;
   await chrome.cookies.remove(REF_COOKIE).catch(() => {});
+  await chrome.storage.local.remove('pendingRef');
   const { account } = await chrome.storage.local.get('account');
   if (body.status === 'granted' && account?.freeSubmitLimit != null) {
     const updated = { ...account, freeSubmitLimit: account.freeSubmitLimit + (body.bonus || 0) };
@@ -123,7 +130,6 @@ async function afterReply(path, data, session) {
   if (path.startsWith('/api/ext/me') && data.success) {
     await chrome.storage.local.set({ features: data.features, account: data.account, accountSession: await sessionTag(session) });
     await setLimitState(data.account);
-    // Queued behind this request, not awaited: it runs on the same queue.
     enqueue(claimReferral).catch(err => console.warn('referral claim:', err.message));
   }
   if (path.startsWith('/api/ext/submit') && data.account?.freeSubmitsUsed != null) {
@@ -140,7 +146,7 @@ async function afterReply(path, data, session) {
     if (account) await setLimitState({ ...account, freeSubmitsUsed: Math.max(account.freeSubmitsUsed || 0, account.freeSubmitLimit ?? 0) });
   }
 }
-const OPEN_PATHS = new Set(['/', '/?upgrade=1', '/settings']);
+const OPEN_PATHS = new Set(['/', '/?upgrade=1', '/?upgrade=pack', '/settings']);
 const RELAY_ORIGINS = new Set(['https://app.hackemos.com', new URL(API_BASE).origin]);
 const SESSION_PATHS = new Set(['/', '/login', '/settings']);
 async function relay(message, sender) {

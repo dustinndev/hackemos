@@ -407,9 +407,9 @@
     });
   }
 
-  const unlimitedButton = () => button('Get unlimited', () => {
-    chrome.runtime.sendMessage({ type: 'openApp', path: '/?upgrade=1' }).catch(() => {});
-  });
+  const openApp = path => chrome.runtime.sendMessage({ type: 'openApp', path }).catch(() => {});
+  const unlimitedButton = () => button('Get unlimited', () => openApp('/?upgrade=1'));
+  const packButton = pack => button(`+${pack.submits} submit credits · ${pack.label}`, () => openApp('/?upgrade=pack'), 'topup');
 
   function showUpgrade(note) {
     setHeader('Hackemos');
@@ -419,7 +419,7 @@
       h('h2', { text: "You've used your free submits" }),
       price && h('p', { class: 'price' }, h('span', { class: 'amount', text: price.label }), h('span', { class: 'muted', text: price.note })),
       h('p', { text: 'Unlimited submits.' }),
-      h('div', { class: 'actions' }, unlimitedButton())));
+      h('div', { class: 'actions upgrade-actions' }, unlimitedButton(), me?.pack && packButton(me.pack))));
   }
 
   async function load(keep) {
@@ -782,7 +782,6 @@
       if (me && b.account?.freeSubmitsUsed != null) me.account.freeSubmitsUsed = b.account.freeSubmitsUsed;
       return showResult(b);
     }
-    // Status 0 is a dropped connection, which can come after the server already posted.
     if (reply.lost || (reply.status === 0 && !reply.stale)) {
       config = null;
       return showMessage({
@@ -992,6 +991,10 @@
     .btn-icon { width: 12px; height: 12px; }
     .submit { min-width: 100px; }
     .submit .free { margin-left: 2px; padding: 1px 8px; border-radius: 999px; background: rgba(4,18,26,0.14); font-size: 11.5px; font-weight: 600; }
+    .message .upgrade-actions { flex-direction: column; align-items: stretch; width: 100%; max-width: 230px; margin-left: auto; margin-right: auto; gap: 8px; }
+    .upgrade .amount { color: var(--primary); }
+    .btn.topup { background: transparent; border-color: rgba(255,255,255,0.14); color: var(--text-muted); font-weight: 600; }
+    .btn.topup:hover { background: rgba(255,255,255,0.04); color: var(--text); }
     .btn.anyway { background: transparent; border-color: rgba(226,75,74,0.45); color: var(--bad); }
     .btn.anyway:hover:not(:disabled) { background: rgba(226,75,74,0.1); }
     .flag { --flag: var(--warn); position: relative; margin-left: auto; }

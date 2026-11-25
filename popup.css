@@ -114,6 +114,11 @@ button { font: inherit; color: inherit; }
 .plan-link svg { width: 8px; height: 8px; fill: currentColor; }
 .plan-link:hover { color: #c4b5fd; text-decoration: none; }
 .plan.out .btn { width: 100%; margin-top: 3px; padding: 8px 14px; font-size: 13px; }
+.plan.out .btn.plan-pack { margin-top: -2px; padding: 7px 14px; font-weight: 600; color: var(--text-muted); background: transparent; border-color: var(--border-hover); }
+.plan.out .btn.plan-pack:hover { color: var(--text); background: rgba(255, 255, 255, 0.04); }
+.plan-links { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.plan-topup { font-size: 12px; font-weight: 600; color: var(--text-muted); white-space: nowrap; }
+.plan-topup:hover { color: var(--text); text-decoration: none; }
 .plan-refer { align-self: center; font-size: 12px; font-weight: 600; color: var(--text-muted); }
 .plan-refer:hover { color: var(--text); text-decoration: none; }
 .settings { display: flex; flex-direction: column; padding: 0 12px; }
@@ -138,6 +143,13 @@ button { font: inherit; color: inherit; }
 .toggle input:checked + .switch { background: var(--primary); }
 .toggle input:checked + .switch::after { transform: translateX(14px); background: #04121a; }
 .toggle input:focus-visible + .switch { outline: 2px solid rgba(0, 191, 255, 0.6); outline-offset: 2px; }
+.redeem { display: flex; flex-direction: column; gap: 6px; }
+.redeem-row { display: flex; gap: 6px; }
+.redeem-row input { flex: 1; min-width: 0; padding: 6px 9px; border-radius: 7px; font: inherit; font-size: 12px; color: var(--text); background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border); outline: none; }
+.redeem-row input:focus { border-color: rgba(0, 191, 255, 0.5); }
+.redeem-row .btn { padding: 6px 12px; font-size: 12px; }
+.redeem-row input { font-variant-ligatures: none; font-feature-settings: 'calt' 0, 'liga' 0; }
+.redeem-error { font-size: 12px; color: #ff6b6b; }
 .foot {
   display: flex; align-items: center; gap: 16px;
   font-size: 12px;
